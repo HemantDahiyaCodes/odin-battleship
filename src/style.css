@@ -1,0 +1,132 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.start-game-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-direction: column;
+  background-color: #bbd2ec;
+}
+
+.battleship-heading {
+  font-size: 70px;
+  font-family: "Lilita One", sans-serif;
+  font-family: "Lilita One";
+}
+
+.battleship-intro {
+  font-size: 30px;
+  font-family: "Lilita One", sans-serif;
+}
+
+.start-game-btn {
+  font-size: 2rem;
+  padding: 1rem;
+  font-family: "Lilita One";
+  background-color: #228b22;
+  color: white;
+  border: 1px solid black;
+}
+
+.start-game-btn:hover {
+  font-size: 2rem;
+  padding: 1rem;
+  font-family: "Lilita One";
+  background-color: burlywood;
+  color: darkgreen;
+  transition: 0.5s;
+  border: 1px solid black;
+  border-radius: 8px;
+}
+
+.main-game {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+  flex-direction: column;
+  background-color: #bbd2ec;
+}
+
+.new-game-div {
+  height: 15%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;  
+}
+
+.new-game-p {
+  font-size: 2rem;
+  font-family: "Lilita One";
+}
+
+.new-game-btn {
+  font-size: 1.5rem;
+  font-family: "Lilita One";
+  padding: 1rem;
+  background-color: #228b22;
+  color: white;
+  border: 1px solid black;
+}
+
+.new-game-btn:hover {
+  background-color: burlywood;
+  color: darkgreen;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.boards-container-div {
+  height: 75%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #bbd2ec;
+}
+
+.board {
+  height: 70%;
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.rows {
+  display: flex;
+  height: 20px;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.cols {
+  height: 100%;
+  width: 20px;
+  flex-grow: 1;
+  border: 1px solid black;
+}
+
+.player-name-container {
+  height: 15%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.player-name, .computer-name {
+  font-size: 2rem;
+  font-family: "Lilita One";
+}
