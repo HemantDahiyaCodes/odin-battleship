@@ -13,7 +13,7 @@ function renderboard(player) {
       col.classList.add("cols");
       col.setAttribute("data-row", rowIndex);
       col.setAttribute("data-col", colIndex);
-      row.appendChild(col);
+      row.append(col);
     });
 
     board.append(row);
