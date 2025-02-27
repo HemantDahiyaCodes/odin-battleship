@@ -3,7 +3,7 @@ import { Player } from "../players/Player";
 import { Ship } from "../ships-factory/Ships";
 
 function playgame() {
-  const firstPlayer = Player("player");
+  const player = Player("player");
   const computerPlayer = Player("Computer");
 
   // Ships
@@ -14,11 +14,11 @@ function playgame() {
   const patrolBoat = Ship(2);
 
   //   Placing ships of player and the computer
-  firstPlayer.Gameboard.placeShip(carrier, 0, 0);
-  firstPlayer.Gameboard.placeShip(battleship, 3, 5);
-  firstPlayer.Gameboard.placeShip(destroyer, 5, 5);
-  firstPlayer.Gameboard.placeShip(submarine, 4, 1);
-  firstPlayer.Gameboard.placeShip(patrolBoat, 7, 1);
+  player.Gameboard.placeShip(carrier, 0, 0);
+  player.Gameboard.placeShip(battleship, 3, 5);
+  player.Gameboard.placeShip(destroyer, 5, 5);
+  player.Gameboard.placeShip(submarine, 4, 1);
+  player.Gameboard.placeShip(patrolBoat, 7, 1);
 
   //   Computer
   computerPlayer.Gameboard.placeShip(carrier, 2, 0);
@@ -55,7 +55,7 @@ function playgame() {
   boardsContainer.classList.add("boards-container-div");
 
   // Creating two boards to store the gameboards for each player.
-  const playerBoard = renderboard(firstPlayer);
+  const playerBoard = renderboard(player);
   playerBoard.classList.add("player-board");
   const computerBoard = renderboard(computerPlayer);
   computerBoard.classList.add("computer-board");
@@ -67,7 +67,7 @@ function playgame() {
   playerInfoContainer.classList.add("player-name-container");
 
   const playerName = document.createElement("div");
-  playerName.textContent = `${firstPlayer.playerName}`;
+  playerName.textContent = `${player.playerName}`;
   playerName.classList.add("player-name");
 
   const computerName = document.createElement("div");
@@ -76,51 +76,49 @@ function playgame() {
 
   playerInfoContainer.append(playerName, computerName);
 
-  // Variables to handle the winner and handling the currentPlayer
-  let winner = false;
-  let currentPlayer = firstPlayer;
+  let gameOver = false;
+  let activePlayer = player;
 
-  // Switchting between players
   const switchPlayers = () => {
-    if (currentPlayer === firstPlayer) {
-      currentPlayer = computerPlayer;
+    if (activePlayer === player) {
+      activePlayer = computerPlayer;
+      enableBoard(playerBoard);
+      disableBoard(computerBoard);
     } else {
-      currentPlayer = firstPlayer;
+      activePlayer = player;
+      enableBoard(computerBoard);
+      disableBoard(playerBoard);
     }
-  };
 
-  const handleClick = (e) => {
-    const row = e.target.dataset.row;
-    const col = e.target.dataset.col;
-
-    const colVal = [row, col];
-    console.log(colVal);
-    switchPlayers();
-    return colVal;
+    console.log("Current player: ", activePlayer)
   };
 
   const enableBoard = (board) => {
     const cols = board.querySelectorAll(".cols");
     cols.forEach((col) => {
-      col.addEventListener("click", handleClick);
+      col.addEventListener("click", attack);
     });
   };
 
   const disableBoard = (board) => {
     const cols = board.querySelectorAll(".cols");
     cols.forEach((col) => {
-      col.removeEventListener("click", handleClick);
+      col.removeEventListener("click", attack);
     });
   };
 
-  if (currentPlayer === firstPlayer) {
-    enableBoard(computerBoard);
-    disableBoard(playerBoard);
-  } else {
-    enableBoard(playerBoard);
-    disableBoard(computerBoard);
-  }
+  const attack = (e) => {
+    const row = e.target.dataset.row;
+    const col = e.target.dataset.col;
 
+    const colVal = [row, col];
+    console.log(colVal);
+    activePlayer.Gameboard.receiveAttack(colVal[0], colVal[1]);
+    switchPlayers();
+  };
+
+  enableBoard(computerBoard);
+  disableBoard(playerBoard);
   mainContainer.append(newGameDiv, boardsContainer, playerInfoContainer);
 }
 
