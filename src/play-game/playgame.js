@@ -14,18 +14,18 @@ function playgame() {
   const patrolBoat = Ship(2);
 
   //   Placing ships of player and the computer
-  player.Gameboard.placeShip(carrier, 0, 0);
-  player.Gameboard.placeShip(battleship, 3, 5);
-  player.Gameboard.placeShip(destroyer, 5, 5);
-  player.Gameboard.placeShip(submarine, 4, 1);
-  player.Gameboard.placeShip(patrolBoat, 7, 1);
+  console.log(player.Gameboard.placeShip(carrier));
+  console.log(player.Gameboard.placeShip(battleship));
+  console.log(player.Gameboard.placeShip(destroyer));
+  console.log(player.Gameboard.placeShip(submarine));
+  console.log(player.Gameboard.placeShip(patrolBoat));
 
   //   Computer
-  computerPlayer.Gameboard.placeShip(carrier, 2, 0);
-  computerPlayer.Gameboard.placeShip(battleship, 3, 1);
-  computerPlayer.Gameboard.placeShip(destroyer, 5, 1);
-  computerPlayer.Gameboard.placeShip(submarine, 4, 5);
-  computerPlayer.Gameboard.placeShip(patrolBoat, 7, 6);
+  console.log(computerPlayer.Gameboard.placeShip(carrier));
+  console.log(computerPlayer.Gameboard.placeShip(battleship));
+  console.log(computerPlayer.Gameboard.placeShip(destroyer));
+  console.log(computerPlayer.Gameboard.placeShip(submarine));
+  console.log(computerPlayer.Gameboard.placeShip(patrolBoat));
 
   const mainContainer = document.getElementById("main-container");
   mainContainer.classList.add("main-game");
@@ -79,6 +79,17 @@ function playgame() {
   let gameOver = false;
   let activePlayer = player;
 
+  const checkWinner = (result) => {
+    if (result) {
+      gameOver = true;
+      alert(`${activePlayer.playerName} wins!`);
+      disableBoard(playerBoard);
+      disableBoard(computerBoard);
+      return true;
+    }
+
+    return false;
+  };
   const switchPlayers = () => {
     if (activePlayer === player) {
       activePlayer = computerPlayer;
@@ -89,8 +100,6 @@ function playgame() {
       enableBoard(computerBoard);
       disableBoard(playerBoard);
     }
-
-    console.log("Current player: ", activePlayer)
   };
 
   const enableBoard = (board) => {
@@ -107,16 +116,119 @@ function playgame() {
     });
   };
 
-  const attack = (e) => {
-    const row = e.target.dataset.row;
-    const col = e.target.dataset.col;
+  const attack = () => {
+    if (gameOver) return;
+    if (activePlayer === player) {
+      // Attacking the computer board!
+      const row = parseInt(event.target.dataset.row);
+      const col = parseInt(event.target.dataset.col);
 
-    const colVal = [row, col];
-    console.log(colVal);
-    activePlayer.Gameboard.receiveAttack(colVal[0], colVal[1]);
+      // Coordinates for the player
+      const coordinatesPlayer = [row, col];
+      console.log(coordinatesPlayer);
+      if (
+        activePlayer.Gameboard.attacks.some(
+          (coords) => coords[0] === row && coords[1] === col
+        )
+      ) {
+        alert("Please select a different coordinate!");
+        return;
+      }
+
+      const atkResult = computerPlayer.Gameboard.receiveAttack(
+        coordinatesPlayer[0],
+        coordinatesPlayer[1]
+      );
+
+      if (atkResult) {
+        console.log("Player hit the ship!");
+        event.target.style.backgroundColor = "red";
+        activePlayer.Gameboard.successfulAtks.push(coordinatesPlayer);
+      } else {
+        console.log("Player's attack missed!");
+        event.target.style.backgroundColor = "gray";
+        activePlayer.Gameboard.missedAtks.push(coordinatesPlayer);
+      }
+
+      activePlayer.Gameboard.attacks.push(coordinatesPlayer);
+    }
+
+    const allShipSunkOfComputer = computerPlayer.Gameboard.allSunk(
+      carrier,
+      battleship,
+      destroyer,
+      submarine,
+      patrolBoat
+    );
+
+    console.log("All ships sunk of computer: ", allShipSunkOfComputer)
+    if (checkWinner(allShipSunkOfComputer)) {
+      return;
+    }
+
     switchPlayers();
-  };
+    console.log("Current player: ", activePlayer);
+    if (activePlayer === computerPlayer) {
+      console.log("Computer's turn");
 
+      const generateCoords = () => {
+        const num = Math.floor(Math.random() * 10);
+        return num;
+      };
+
+      let computerRow = generateCoords();
+      let computercol = generateCoords();
+
+      const computercoords = [computerRow, computercol];
+      activePlayer.Gameboard.attacks.push(computercoords);
+      do {
+        computerRow = generateCoords();
+        computercol = generateCoords();
+      } while (
+        activePlayer.Gameboard.attacks.some(
+          (coords) => coords[0] === computerRow && coords[1] === computercol
+        )
+      );
+
+      // Computer Cell to handle DOM updation
+      const computerCell = document.querySelector(
+        `.player-board .cols[data-row = "${computercoords[0]}"][data-col = "${computercoords[1]}"]`
+      );
+
+      const atkResult = player.Gameboard.receiveAttack(
+        computercoords[0],
+        computercoords[1]
+      );
+
+      if (atkResult) {
+        computerCell.style.backgroundColor = "red";
+        activePlayer.Gameboard.successfulAtks.push(computercoords);
+      } else {
+        computerCell.style.backgroundColor = "gray";
+        activePlayer.Gameboard.missedAtks.push(computercoords);
+      }
+      console.log("Computer hit:", computercoords);
+
+      const allShipSunkOfPlayer = player.Gameboard.allSunk(
+        carrier,
+        battleship,
+        destroyer,
+        submarine,
+        patrolBoat
+      );
+
+      console.log("All ships sunk of player: ", allShipSunkOfPlayer);
+
+      if (checkWinner(allShipSunkOfPlayer)) {
+        return;
+      }
+      console.log(gameOver);
+      switchPlayers();
+      console.log("back to: ", activePlayer);
+    }
+  };
+  console.log("Player's turn!");
+  // Initaial render
   enableBoard(computerBoard);
   disableBoard(playerBoard);
   mainContainer.append(newGameDiv, boardsContainer, playerInfoContainer);
