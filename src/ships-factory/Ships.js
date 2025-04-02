@@ -11,6 +11,8 @@ function Ship(length) {
       sunk = true;
       return sunk;
     }
+    
+    return false;
   };
 
   const getHits = () => {
