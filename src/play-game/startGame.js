@@ -1,4 +1,4 @@
-import { playgame } from "./playGame";
+import { playgame } from "../play-game";
 
 const mainContainer = document.getElementById("main-container");
 mainContainer.classList.add("start-game-container");
